@@ -11,6 +11,7 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
+import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import net.neoforged.neoforge.event.server.ServerStoppingEvent;
@@ -30,11 +31,11 @@ public class MinecraftWebsocketAPI {
 
         modContainer.registerConfig(ModConfig.Type.SERVER, Config.SERVER_SPEC);
 
-        modEventBus.register(this);
+        NeoForge.EVENT_BUS.register(this);
     }
 
     @SubscribeEvent
-    private void onServerStarting(ServerStartingEvent event) {
+    public void onServerStarting(ServerStartingEvent event) {
         LOGGER.info("Server starting, initializing WebSocket API");
 
         try {
@@ -58,7 +59,7 @@ public class MinecraftWebsocketAPI {
     }
 
     @SubscribeEvent
-    private void onServerStopping(ServerStoppingEvent event) {
+    public void onServerStopping(ServerStoppingEvent event) {
         LOGGER.info("Server stopping, shutting down WebSocket API");
 
         if (webSocketServer != null) {
