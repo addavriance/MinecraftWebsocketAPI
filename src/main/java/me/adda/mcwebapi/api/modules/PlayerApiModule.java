@@ -22,7 +22,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.server.ServerLifecycleHooks;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @ApiModule("player")
 public class PlayerApiModule extends BaseApiModule {
@@ -106,18 +105,6 @@ public class PlayerApiModule extends BaseApiModule {
             }
         }
         return false;
-    }
-
-    @ApiMethod("list")
-    public List<String> listPlayers() {
-        MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
-        if (server != null) {
-            return server.getPlayerList().getPlayers()
-                    .stream()
-                    .map(player -> player.getGameProfile().getName())
-                    .collect(Collectors.toList());
-        }
-        return Collections.emptyList();
     }
 
     @ApiMethod("kick")
