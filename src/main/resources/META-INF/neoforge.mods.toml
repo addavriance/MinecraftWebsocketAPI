@@ -97,10 +97,6 @@ artifact = "io.netty:netty-codec-http:[4.1.97.Final,4.2)"
 id = "io.netty:netty-codec-http"
 
 [[jarJar.pin]]
-artifact = "io.netty:netty-handler:[4.1.97.Final,4.2)"
-id = "io.netty:netty-handler"
-
-[[jarJar.pin]]
 artifact = "com.fasterxml.jackson.core:jackson-core:[2.16.1,2.17)"
 id = "com.fasterxml.jackson.core:jackson-core"
 
