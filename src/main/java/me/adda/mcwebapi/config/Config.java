@@ -14,6 +14,7 @@ public class Config {
     }
 
     public static class ServerConfig {
+        public final ModConfigSpec.ConfigValue<String> host;
         public final ModConfigSpec.IntValue port;
         public final ModConfigSpec.ConfigValue<String> authKey;
         public final ModConfigSpec.BooleanValue enableSSL;
@@ -22,6 +23,10 @@ public class Config {
 
         public ServerConfig(ModConfigSpec.Builder builder) {
             builder.push("websocket");
+
+            this.host = builder
+                    .comment("WebSocket server host")
+                    .define("host", "0.0.0.0");
 
             this.port = builder
                     .comment("WebSocket server port")

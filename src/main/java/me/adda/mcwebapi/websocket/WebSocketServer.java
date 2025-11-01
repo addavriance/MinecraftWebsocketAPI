@@ -32,10 +32,11 @@ public class WebSocketServer {
                     .channel(NioServerSocketChannel.class)
                     .childHandler(new WebSocketServerInitializer(apiDispatcher));
 
+            String host = Config.SERVER.host.get();
             int port = Config.SERVER.port.get();
-            channel = bootstrap.bind(port).sync().channel();
+            channel = bootstrap.bind(host, port).sync().channel();
 
-            LOGGER.info("WebSocket API server started on port {}", port);
+            LOGGER.info("WebSocket API server started on {}:{}", host, port);
         } catch (InterruptedException e) {
             LOGGER.error("Failed to start WebSocket server", e);
             stop();
