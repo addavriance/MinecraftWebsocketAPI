@@ -154,8 +154,8 @@ Complete API reference: [Wiki Documentation](https://github.com/addavriance/Mine
 ## Building
 
 ```bash
-git clone https://github.com/yourusername/minecraft-websocket-api.git
-cd minecraft-websocket-api
+git clone https://github.com/addavriance/MinecraftWebsocketAPI.git
+cd MinecraftWebsocketAPI
 ./gradlew build
 # Output: build/libs/mcwebapi-1.3.0.jar
 ```
