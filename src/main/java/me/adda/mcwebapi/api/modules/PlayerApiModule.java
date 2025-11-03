@@ -58,6 +58,33 @@ public class PlayerApiModule extends BaseApiModule {
         return player != null ? player.getMaxHealth() : -1.0f;
     }
 
+    @ApiMethod("getX")
+    public Double getX(String identifier) {
+        ServerPlayer player = findPlayer(identifier);
+        if (player != null) {
+            return player.getX();
+        }
+        return null;
+    }
+
+    @ApiMethod("getY")
+    public Double getY(String identifier) {
+        ServerPlayer player = findPlayer(identifier);
+        if (player != null) {
+            return player.getY();
+        }
+        return null;
+    }
+
+    @ApiMethod("getZ")
+    public Double getZ(String identifier) {
+        ServerPlayer player = findPlayer(identifier);
+        if (player != null) {
+            return player.getZ();
+        }
+        return null;
+    }
+
     @ApiMethod("getPosition")
     public Map<String, Double> getPosition(String identifier) {
         ServerPlayer player = findPlayer(identifier);
@@ -81,10 +108,10 @@ public class PlayerApiModule extends BaseApiModule {
         return false;
     }
 
-    @ApiMethod("teleportToPlayer")
-    public boolean teleportToPlayer(String identifier, String targetidentifier) {
+    @ApiMethod("teleportTo")
+    public boolean teleportTo(String identifier, String targetIdentifier) {
         ServerPlayer player = findPlayer(identifier);
-        ServerPlayer target = findPlayer(targetidentifier);
+        ServerPlayer target = findPlayer(targetIdentifier);
         if (player != null && target != null) {
             player.teleportTo(target.getX(), target.getY(), target.getZ());
             return true;
