@@ -7,6 +7,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.Property;
@@ -90,7 +91,7 @@ public class BlockApiModule extends BaseApiModule {
             if (level == null) return false;
 
             BlockPos pos = new BlockPos(x, y, z);
-            net.minecraft.world.level.block.Block block = BuiltInRegistries.BLOCK.get(ResourceLocation.parse(blockId));
+            Block block = BuiltInRegistries.BLOCK.get(ResourceLocation.parse(blockId));
 
             if (block != null) {
                 return level.setBlock(pos, block.defaultBlockState(), 3);
@@ -114,9 +115,6 @@ public class BlockApiModule extends BaseApiModule {
     public Map<String, Object> getInventory(String levelId, int x, int y, int z) {
         return executeOnServerThread(() -> {
             ServerLevel level = getLevel(levelId);
-            if (level == null) {
-                return Map.of("error", "Level not found");
-            }
 
             BlockPos pos = new BlockPos(x, y, z);
             BlockState state = level.getBlockState(pos);
@@ -259,40 +257,5 @@ public class BlockApiModule extends BaseApiModule {
 
             return info;
         });
-    }
-
-    @ApiMethod("fillArea")
-    public boolean fillArea(String levelId, int x1, int y1, int z1, int x2, int y2, int z2, String blockId) {
-        return Boolean.TRUE.equals(executeOnServerThread(() -> {
-            ServerLevel level = getLevel(levelId);
-            if (level == null) return false;
-
-            net.minecraft.world.level.block.Block block = BuiltInRegistries.BLOCK.get(ResourceLocation.parse(blockId));
-            if (block == null) return false;
-
-            int minX = Math.min(x1, x2);
-            int maxX = Math.max(x1, x2);
-            int minY = Math.min(y1, y2);
-            int maxY = Math.max(y1, y2);
-            int minZ = Math.min(z1, z2);
-            int maxZ = Math.max(z1, z2);
-
-            if ((maxX - minX + 1) * (maxY - minY + 1) * (maxZ - minZ + 1) > 10000) {
-                return false;
-            }
-
-            BlockState blockState = block.defaultBlockState();
-
-            for (int x = minX; x <= maxX; x++) {
-                for (int y = minY; y <= maxY; y++) {
-                    for (int z = minZ; z <= maxZ; z++) {
-                        BlockPos pos = new BlockPos(x, y, z);
-                        level.setBlock(pos, blockState, 3);
-                    }
-                }
-            }
-
-            return true;
-        }));
     }
 }
