@@ -2,7 +2,6 @@
 
 [![NeoForge](https://img.shields.io/badge/NeoForge-21.1.176-orange?style=for-the-badge&logo=java&labelColor=black)](https://neoforged.net/)
 [![Minecraft](https://img.shields.io/badge/Minecraft-1.21.1-green?style=for-the-badge&logo=minecraft&labelColor=black)](https://minecraft.net/)
-[![License](https://img.shields.io/badge/License-GPL--3.0-blue?style=for-the-badge&labelColor=black)](LICENSE)
 [![Java](https://img.shields.io/badge/Java-21-red?style=for-the-badge&logo=openjdk&labelColor=black)](https://openjdk.org/)
 
 A NeoForge server-side mod that exposes Minecraft functionality through a WebSocket API. Control players, manipulate worlds, and interact with blocks in real-time from external applications.
@@ -25,12 +24,22 @@ A NeoForge server-side mod that exposes Minecraft functionality through a WebSoc
 
 ```toml
 [websocket]
-    host = "0.0.0.0"
+    #WebSocket server port
+    # Default: 8765
+    # Range: 1000 ~ 65535
     port = 8765
-    authKey = "change-this-secure-key"  # IMPORTANT: Change this!
+    #Authentication key for binary protocol
+    authKey = "default-secret-key-change-me"
+    #Enable TLS/SSL encryption
     enableSSL = false
+    #Request timeout in seconds
+    # Default: 30
+    # Range: 1 ~ 300
     timeout = 30
+    #Allowed origins for CORS
     allowedOrigins = "*"
+    #WebSocket server host
+    host = "0.0.0.0"
 ```
 
 ## Quick Start
@@ -44,33 +53,36 @@ pip install mcwebapi
 ```
 
 ```python
-from mcwebapi import MinecraftClient
+from mcwebapi import MinecraftAPI
 
 # Connect and authenticate
-client = MinecraftClient(auth_key="your-auth-key")
-client.connect()
+api = MinecraftApi(auth_key="your-auth-key")
+api.connect()
 
 # Player operations
-client.player.sendMessage("Steve", "Hello!")
-health = client.player.getHealth("Steve")
-client.player.teleport("Steve", 100, 64, 100)
+player = api.Player("Steve")
+player.sendMessage("Hello!")
+health = player.getHealth().then(print)
+player.teleport(100, 64, 100)
 
 # World operations
-client.world.setBlock("minecraft:overworld", "minecraft:diamond_block", 0, 64, 0)
-client.world.setDayTime("minecraft:overworld", 6000)
+level = api.Level("minecraft:overworld")
+level.setBlock("minecraft:diamond_block", 0, 64, 0)
+level.setDayTime(6000)
 
 # Block operations
-inventory = client.block.getInventory("minecraft:overworld", 10, 64, 10)
+target_block = api.Block("minecraft:overworld", 10, 64, 10)
+inventory = target_block.getInventory()
 ```
 
 OR
 
 ```python
-from mcwebapi import MinecraftClient
+from mcwebapi import MinecraftAPI
 
 with MinecraftAPI(auth_key="your-auth-key") as client:
     while True:
-        player_vec3 = client.player.getPosition("Dev").wait()
+        player_vec3 = client.Player("Dev").getPosition().wait()
         print(player_vec3)
 ```
 
@@ -146,7 +158,7 @@ Complete API reference: [Wiki Documentation](https://github.com/addavriance/Mine
 ## Security
 
 - **Change default auth key immediately**
-- Enable SSL for production: Set `enableSSL = true` and ensure proper key setup
+- Enable SSL for production: Set `enableSSL = true` and ensure proper key setup (WIP)
 - Bind to specific interface: Use `host = "127.0.0.1"` for local-only access
 - Use firewall rules to restrict port access
 - Monitor logs for unauthorized attempts
