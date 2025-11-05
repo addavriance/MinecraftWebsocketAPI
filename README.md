@@ -20,10 +20,10 @@
   </p>
   
   <p>
-    <a href="#-features">Features</a> •
-    <a href="#-installation">Installation</a> •
-    <a href="#-quick-start">Quick Start</a> •
-    <a href="#-api-modules">API Modules</a> •
+    <a href="#features">Features</a> •
+    <a href="#installation">Installation</a> •
+    <a href="#quick-start">Quick Start</a> •
+    <a href="#api-modules">API Modules</a> •
     <a href="#-documentation">Docs</a>
   </p>
   
