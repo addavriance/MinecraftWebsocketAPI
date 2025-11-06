@@ -4,6 +4,7 @@ import me.adda.mcwebapi.api.BaseApiModule;
 import me.adda.mcwebapi.api.annotations.ApiMethod;
 import me.adda.mcwebapi.api.annotations.ApiModule;
 import net.minecraft.core.Holder;
+import net.minecraft.network.protocol.game.ClientboundPlayerPositionPacket;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.MinecraftServer;
@@ -465,6 +466,14 @@ public class PlayerApiModule extends BaseApiModule {
         if (player != null) {
             player.setYRot(yaw);
             player.setXRot(pitch);
+            player.setYHeadRot(yaw);
+            player.setYBodyRot(yaw);
+
+            player.connection.send(new ClientboundPlayerPositionPacket(
+                    player.getX(), player.getY(), player.getZ(),
+                    yaw, pitch,
+                    Collections.emptySet(), 0
+            ));
             return true;
         }
         return false;
@@ -487,7 +496,9 @@ public class PlayerApiModule extends BaseApiModule {
     public boolean setVelocity(String identifier, double x, double y, double z) {
         ServerPlayer player = findPlayer(identifier);
         if (player != null) {
+            player.hurtMarked = true;
             player.setDeltaMovement(new Vec3(x, y, z));
+            player.hurtMarked = false;
             return true;
         }
         return false;
