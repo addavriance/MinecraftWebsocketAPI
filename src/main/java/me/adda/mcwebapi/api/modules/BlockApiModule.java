@@ -25,30 +25,6 @@ import java.util.concurrent.ExecutionException;
 
 @ApiModule("block")
 public class BlockApiModule extends BaseApiModule {
-    private <T> T executeOnServerThread(java.util.function.Supplier<T> supplier) {
-        MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
-        if (server == null) return null;
-
-        if (server.isSameThread()) {
-            return supplier.get();
-        }
-
-        CompletableFuture<T> future = new CompletableFuture<>();
-        server.execute(() -> {
-            try {
-                future.complete(supplier.get());
-            } catch (Exception e) {
-                future.completeExceptionally(e);
-            }
-        });
-
-        try {
-            return future.get();
-        } catch (InterruptedException | ExecutionException e) {
-            return null;
-        }
-    }
-
     @ApiMethod("getBlock")
     public Map<String, Object> getBlock(String levelId, int x, int y, int z) {
         return executeOnServerThread(() -> {

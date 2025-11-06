@@ -184,7 +184,7 @@ public class PlayerApiModule extends BaseApiModule {
         if (player != null) {
             exp.put("level", player.experienceLevel);
             exp.put("total", player.totalExperience);
-            exp.put("progress", (int)(player.experienceProgress * 100));
+            exp.put("progress", (int) (player.experienceProgress * 100));
         }
         return exp;
     }
@@ -448,13 +448,15 @@ public class PlayerApiModule extends BaseApiModule {
 
     @ApiMethod("getRotation")
     public Map<String, Float> getRotation(String identifier) {
-        ServerPlayer player = findPlayer(identifier);
-        Map<String, Float> rotation = new HashMap<>();
-        if (player != null) {
-            rotation.put("yaw", player.getYRot());
-            rotation.put("pitch", player.getXRot());
-        }
-        return rotation;
+        return executeOnServerThread(() -> {
+            ServerPlayer player = findPlayer(identifier);
+            Map<String, Float> rotation = new HashMap<>();
+            if (player != null) {
+                rotation.put("yaw", player.getYRot());
+                rotation.put("pitch", player.getXRot());
+            }
+            return rotation;
+        });
     }
 
     @ApiMethod("setRotation")

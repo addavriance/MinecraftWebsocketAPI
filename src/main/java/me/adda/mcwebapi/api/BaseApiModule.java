@@ -14,7 +14,9 @@ import net.neoforged.neoforge.server.ServerLifecycleHooks;
 import java.lang.ref.SoftReference;
 import java.lang.reflect.Method;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutionException;
 import java.util.function.Function;
 
 public abstract class BaseApiModule {
@@ -195,6 +197,30 @@ public abstract class BaseApiModule {
         return player.connection.getConnection().isConnected() &&
                 player.server != null &&
                 player.server.getPlayerList().getPlayerByName(player.getScoreboardName()) != null;
+    }
+
+    protected <T> T executeOnServerThread(java.util.function.Supplier<T> supplier) {
+        MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
+        if (server == null) return null;
+
+        if (server.isSameThread()) {
+            return supplier.get();
+        }
+
+        CompletableFuture<T> future = new CompletableFuture<>();
+        server.execute(() -> {
+            try {
+                future.complete(supplier.get());
+            } catch (Exception e) {
+                future.completeExceptionally(e);
+            }
+        });
+
+        try {
+            return future.get();
+        } catch (InterruptedException | ExecutionException e) {
+            return null;
+        }
     }
 
     public static class CacheEntry<T> {
