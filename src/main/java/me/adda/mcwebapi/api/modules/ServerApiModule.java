@@ -98,17 +98,9 @@ public class ServerApiModule extends BaseApiModule {
         if (server == null) return -1.0;
 
         // Calculate average TPS based on tick times
-        double meanTickTime = mean(server.tickTimes) * 1.0E-6D;
+        double meanTickTime = server.getAverageTickTimeNanos() * 1.0E-6D;
         double tps = Math.min(1000.0 / meanTickTime, 20.0);
         return Math.round(tps * 100.0) / 100.0;
-    }
-
-    private double mean(long[] values) {
-        long sum = 0L;
-        for (long value : values) {
-            sum += value;
-        }
-        return (double) sum / values.length;
     }
 
     @ApiMethod("getTickCount")
@@ -206,9 +198,8 @@ public class ServerApiModule extends BaseApiModule {
                         .withPermission(4)
                         .withSuppressedOutput();
 
-                int exitCode = server.getCommands().performPrefixedCommand(source, command);
-                result.put("success", exitCode > 0);
-                result.put("exitCode", exitCode);
+                server.getCommands().performPrefixedCommand(source, command);
+                result.put("success", true);
             } catch (Exception e) {
                 result.put("success", false);
                 result.put("error", e.getMessage());

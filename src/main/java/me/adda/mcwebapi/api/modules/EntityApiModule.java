@@ -333,10 +333,13 @@ public class EntityApiModule extends BaseApiModule {
                 return Collections.emptyList();
             }
 
-            return level.getAllEntities().stream()
-                    .filter(entity -> entity.getType() == entityType)
-                    .map(this::createEntitySummary)
-                    .collect(Collectors.toList());
+            List<Map<String, Object>> result = new ArrayList<>();
+            for (Entity entity : level.getAllEntities()) {
+                if (entity.getType() == entityType) {
+                    result.add(createEntitySummary(entity));
+                }
+            }
+            return result;
         });
     }
 
@@ -345,11 +348,13 @@ public class EntityApiModule extends BaseApiModule {
         ServerLevel level = getLevel(levelId);
         if (level == null) return Collections.emptyList();
 
-        return executeOnServerThread(() ->
-            level.getAllEntities().stream()
-                    .map(this::createEntitySummary)
-                    .collect(Collectors.toList())
-        );
+        return executeOnServerThread(() -> {
+            List<Map<String, Object>> result = new ArrayList<>();
+            for (Entity entity : level.getAllEntities()) {
+                result.add(createEntitySummary(entity));
+            }
+            return result;
+        });
     }
 
     @ApiMethod("getEntityCount")
@@ -357,7 +362,13 @@ public class EntityApiModule extends BaseApiModule {
         ServerLevel level = getLevel(levelId);
         if (level == null) return -1;
 
-        return executeOnServerThread(() -> level.getAllEntities().size());
+        return executeOnServerThread(() -> {
+            int count = 0;
+            for (Entity entity : level.getAllEntities()) {
+                count++;
+            }
+            return count;
+        });
     }
 
     @ApiMethod("getEntityCountByType")
@@ -373,9 +384,13 @@ public class EntityApiModule extends BaseApiModule {
                 return -1;
             }
 
-            return (int) level.getAllEntities().stream()
-                    .filter(entity -> entity.getType() == entityType)
-                    .count();
+            int count = 0;
+            for (Entity entity : level.getAllEntities()) {
+                if (entity.getType() == entityType) {
+                    count++;
+                }
+            }
+            return count;
         });
     }
 
