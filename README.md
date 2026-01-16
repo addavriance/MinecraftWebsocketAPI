@@ -24,7 +24,7 @@
     <a href="#installation">Installation</a> •
     <a href="#quick-start">Quick Start</a> •
     <a href="#api-modules">API Modules</a> •
-    <a href="#-documentation">Docs</a>
+    <a href="#documentation">Docs</a>
   </p>
   
 </div>
@@ -304,11 +304,11 @@ api.disconnect()
 
 ---
 
-## 📖 Documentation
+## Documentation
 
-- 📚 **[Full API Reference](https://github.com/addavriance/MinecraftWebsocketAPI/wiki)** (WIP)
-- 🐍 **[Python Client Docs](https://github.com/addavriance/mcwebapi)**
-- 💬 **[Discord Community](https://discord.gg/your-invite)** (optional)
+- **[Full API Reference](https://github.com/addavriance/MinecraftWebsocketAPI/wiki)** (WIP)
+- **[Python Client Docs](https://github.com/addavriance/mcwebapi)**
+- **[Discord Community](https://discord.gg/your-invite)** (optional)
 
 ---
 
@@ -366,7 +366,7 @@ Verify that `authKey` matches between server config and client code.
 
 ---
 
-## ⚡ Performance
+## Performance
 
 - **Smart caching** with SoftReferences (prevents memory leaks)
 - **Thread-safe** concurrent data structures
@@ -375,24 +375,18 @@ Verify that `authKey` matches between server config and client code.
 
 ---
 
-## 🤝 Contributing
+## Contributing
 
 Contributions are welcome! Please feel free to:
 
-- 🐛 Report bugs via [Issues](https://github.com/addavriance/MinecraftWebsocketAPI/issues)
-- 💡 Suggest features
-- 🔧 Submit pull requests
-- 📖 Improve documentation
+- Report bugs via [Issues](https://github.com/addavriance/MinecraftWebsocketAPI/issues)
+- Suggest features
+- Submit pull requests
+- Improve documentation
 
 ---
 
-## 📄 License
-
-This project is licensed under **GPL-3.0** - see [LICENSE](LICENSE) for details.
-
----
-
-## 🔗 Links
+## Links
 
 <p align="center">
   <a href="https://github.com/addavriance/mcwebapi">
