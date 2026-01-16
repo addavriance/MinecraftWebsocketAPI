@@ -113,7 +113,7 @@ public class ServerApiModule extends BaseApiModule {
     public long getUptime() {
         MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
         if (server == null) return -1;
-        return server.getTickCount() * 50; // Convert ticks to milliseconds
+        return server.getTickCount() * 50L; // Convert ticks to milliseconds
     }
 
     @ApiMethod("getMemoryUsage")
