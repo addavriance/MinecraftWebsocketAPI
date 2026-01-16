@@ -47,6 +47,9 @@ public class MinecraftWebsocketAPI {
             apiDispatcher.registerModule(new PlayerApiModule());
             apiDispatcher.registerModule(new WorldApiModule());
             apiDispatcher.registerModule(new BlockApiModule());
+            apiDispatcher.registerModule(new EntityApiModule());
+            apiDispatcher.registerModule(new ServerApiModule());
+            apiDispatcher.registerModule(new ScoreboardApiModule());
 
             webSocketServer = new WebSocketServer(apiDispatcher);
             webSocketServer.start();
