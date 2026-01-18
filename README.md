@@ -18,6 +18,18 @@
       <img src="https://img.shields.io/badge/License-GPL--3.0-blue?style=for-the-badge" alt="License"/>
     </a>
   </p>
+
+  <p align="center">
+    <a href="https://github.com/addavriance/mcwebapi">
+      <img src="https://img.shields.io/badge/Python_Client-mcwebapi-blue?style=for-the-badge&logo=github&logoColor=white" alt="Python Client"/>
+    </a>
+    <a href="https://pypi.org/project/mcwebapi/">
+      <img src="https://img.shields.io/badge/PyPI-mcwebapi-blue?style=for-the-badge&logo=pypi&logoColor=white" alt="PyPI"/>
+    </a>
+    <a href="https://github.com/addavriance/MinecraftWebsocketAPI/wiki">
+      <img src="https://img.shields.io/badge/Wiki-Documentation-green?style=for-the-badge&logo=github" alt="Wiki"/>
+    </a>
+  </p>
   
   <p>
     <a href="#features">Features</a> •
@@ -38,16 +50,25 @@
 
 ## What is this?
 
-A **server-side NeoForge mod** that exposes Minecraft's functionality through a **WebSocket API**, enabling real-time control from external applications in **any programming language**.
+A **client/server-side NeoForge mod** that exposes Minecraft's functionality through a **WebSocket API**, enabling real-time control from external applications in **any programming language**.
 
 ```python
 # It's THIS simple:
+import asyncio
 from mcwebapi import MinecraftAPI
 
-with MinecraftAPI() as api:
-    api.Player("Steve").teleport(0, 100, 0).wait()
-    api.Level("minecraft:overworld").setDayTime(6000).wait()
-    api.Block("minecraft:overworld", 10, 64, 10).setBlock("minecraft:diamond_block").wait()
+async def main():
+    async with MinecraftAPI() as api:
+        player = api.Player("Steve")
+        await player.teleport(0, 100, 0)
+
+        level = api.Level("minecraft:overworld")
+        await level.setDayTime(6000)
+
+        block = api.Block("minecraft:overworld")
+        await block.setBlock(10, 64, 10, "minecraft:diamond_block")
+
+asyncio.run(main())
 ```
 
 **Perfect for:** Automation • Education • Custom Game Mechanics • Server Monitoring • Testing • Fun! 
@@ -96,7 +117,7 @@ with MinecraftAPI() as api:
 ### Python Client
 
 - **PyPI package** (`pip install mcwebapi`)
-- **Promise-based** async patterns
+- **Async/await** native asyncio support
 - **Type hints** for IDE support
 - **Context managers** for clean code
 
@@ -137,178 +158,89 @@ pip install mcwebapi
 ### Basic Example
 
 ```python
+import asyncio
 from mcwebapi import MinecraftAPI
 
-# Connect to your server
-api = MinecraftAPI(
-    host="localhost",
-    port=8765,
-    auth_key="your-secret-key-here"
-)
+async def main():
+    # Connect to your server
+    async with MinecraftAPI(
+        host="localhost",
+        port=8765,
+        auth_key="your-secret-key-here"
+    ) as api:
+        # Control players
+        player = api.Player("Steve")
+        await player.setHealth(20.0)
+        await player.teleport(0, 100, 0)
+        await player.sendMessage("Hello from Python!")
 
-api.connect()
+        # Manipulate world
+        level = api.Level("minecraft:overworld")
+        await level.setDayTime(6000)  # Noon
+        await level.setWeather(True, False)  # Rain, no thunder
 
-# Control players
-player = api.Player("Steve")
-player.setHealth(20.0)
-player.teleport(0, 100, 0)
-player.sendMessage("Hello from Python!")
+        # Interact with blocks
+        block = api.Block("minecraft:overworld")
+        await block.setBlock(10, 64, 10, "minecraft:diamond_block")
 
-# Manipulate world
-level = api.Level("minecraft:overworld")
-level.setDayTime(6000)  # Noon
-level.setWeather(True, False)  # Rain, no thunder
-
-# Interact with blocks
-block = api.Block("minecraft:overworld", 10, 64, 10)
-block.setBlock("minecraft:diamond_block")
-
-api.disconnect()
+asyncio.run(main())
 ```
 
-### Context Manager (Recommended)
+### Concurrent Operations
 
 ```python
+import asyncio
 from mcwebapi import MinecraftAPI
 
-with MinecraftAPI(auth_key="your-key") as api:
-    # Your code here
-    position = api.Player("Steve").getPosition().wait()
-    print(f"Steve is at {position}")
-    
-# Automatically disconnects and cleans up
-```
+async def main():
+    async with MinecraftAPI(auth_key="your-key") as api:
+        # Get multiple values concurrently
+        player1 = api.Player("Steve")
+        player2 = api.Player("Alex")
 
-### Async with Promises
+        health1, health2 = await asyncio.gather(
+            player1.getHealth(),
+            player2.getHealth()
+        )
 
-```python
-from mcwebapi import MinecraftAPI
+        print(f"Steve: {health1}, Alex: {health2}")
 
-api = MinecraftAPI()
-api.connect()
-
-# Non-blocking with callbacks
-api.Player("Steve").getHealth().then(lambda hp: print(f"Health: {hp}"))
-api.Player("Alex").getPosition().then(lambda pos: print(f"Position: {pos}"))
-
-# Or wait synchronously
-health = api.Player("Steve").getHealth().wait()
-
-api.wait_for_pending()
-api.disconnect()
+asyncio.run(main())
 ```
 
 ---
 
 ## API Modules
 
-<details>
-<summary><b>Player Module</b> - Comprehensive player control</summary>
+The Python client provides comprehensive access to all Minecraft server functionality:
 
-<br/>
+### 🎮 [Player Operations](https://github.com/addavriance/mcwebapi/wiki/Player-Operations)
+Health, inventory, teleportation, effects, experience, game mode
 
-**Health & Stats**
-- `getHealth()`, `setHealth(hp)`, `getMaxHealth()`
-- `getFood()`, `setFood(level)`, `getSaturation()`
+### 🌍 [Level Management](https://github.com/addavriance/mcwebapi/wiki/Level-Management)
+Time, weather, blocks, world border, spawn point, chunks
 
-**Position & Movement**
-- `getPosition()` → `{x, y, z}`
-- `teleport(x, y, z)`
-- `teleportToDimension(dimension, x, y, z)`
-- `getRotation()`, `setRotation(yaw, pitch)`
-- `getVelocity()`, `setVelocity(x, y, z)`
+### 🧱 [Block Operations](https://github.com/addavriance/mcwebapi/wiki/Block-Operations)
+Place/break blocks, manage container inventories (chests, furnaces)
 
-**Inventory & Items**
-- `getInventory()` → List of items with NBT
-- `clearInventory()`
-- `giveItem(itemId, count)`
-- `getArmor()`, `getEnderChest()`
+### 👾 [Entity Management](https://github.com/addavriance/mcwebapi/wiki/Entity-Management)
+Spawn, remove, teleport, and customize entities
 
-**Effects & Experience**
-- `getEffects()`, `addEffect(effect, duration, amplifier)`, `clearEffects()`
-- `getExperience()`, `setExperience(level)`
+### 🏆 [Scoreboard](https://github.com/addavriance/mcwebapi/wiki/Scoreboard)
+Objectives, teams, scores, display slots
 
-**Game Mode & Info**
-- `getGameMode()`, `setGameMode(mode)`
-- `getPlayerInfo()` → Comprehensive stats
-- `getUUID()`, `isOnline()`, `getPing()`
+### ⚙️ [Server Management](https://github.com/addavriance/mcwebapi/wiki/Server-Management)
+Server info, monitoring, player management, commands
 
-**Actions**
-- `sendMessage(text)`
-- `kick(reason)`
-
-</details>
-
-<details>
-<summary><b>World Module</b> - World manipulation</summary>
-
-<br/>
-
-**Blocks**
-- `getBlock(x, y, z)` → Block type + properties
-- `setBlock(blockId, x, y, z)`
-- `getBlockState(x, y, z)` → Full state with properties
-
-**Time & Weather**
-- `getDayTime()`, `setDayTime(time)`
-- `isDay()`, `isNight()`, `getMoonPhase()`
-- `getWeather()`, `setWeather(rain, thunder)`
-
-**Terrain**
-- `getHeight(x, z, heightmapType)`
-- `getLightLevel(x, y, z)`
-- `getSpawnPoint()`, `setSpawnPoint(x, y, z, angle)`
-
-**World Border**
-- `getWorldBorder()` → Center, size, damage
-- `setWorldBorder(centerX, centerZ, size)`
-
-**Entities & Players**
-- `getPlayers()` → List of online players
-- `getEntities()`, `getEntityCount()`
-- `sendMessageToAll(message)`
-
-**Chunks**
-- `getChunkInfo(chunkX, chunkZ)`
-- `loadChunk(chunkX, chunkZ)`
-- `unloadChunk(chunkX, chunkZ)`
-
-**Advanced**
-- `explode(x, y, z, power, fire)`
-- `getDifficulty()`, `setDifficulty(difficulty)`
-- `getLevelInfo()` → Complete world stats
-
-</details>
-
-<details>
-<summary><b>Block Module</b> - Block entity operations</summary>
-
-<br/>
-
-**Block Info**
-- `getBlock()` → Type, properties, light levels, block entity info
-
-**Manipulation**
-- `setBlock(blockId)`
-- `breakBlock(dropItems)`
-
-**Containers (Chests, Barrels, etc.)**
-- `getInventory()` → Items with full NBT data
-- `setInventorySlot(slot, itemId, count)`
-- `clearInventory()`
-
-**Furnaces**
-- `getFurnaceInfo()` → Burn time, cook progress, slots
-
-</details>
+**[📖 View Full API Documentation →](https://github.com/addavriance/mcwebapi/wiki)**
 
 ---
 
 ## Documentation
 
-- **[Full API Reference](https://github.com/addavriance/MinecraftWebsocketAPI/wiki)** (WIP)
-- **[Python Client Docs](https://github.com/addavriance/mcwebapi)**
-- **[Discord Community](https://discord.gg/your-invite)** (optional)
+- **[Python Client Documentation](https://github.com/addavriance/mcwebapi/wiki)** - Complete API reference with examples
+- **[Python Client GitHub](https://github.com/addavriance/mcwebapi)** - Source code and issues
+- **[PyPI Package](https://pypi.org/project/mcwebapi/)** - Installation and releases
 
 ---
 
@@ -366,15 +298,6 @@ Verify that `authKey` matches between server config and client code.
 
 ---
 
-## Performance
-
-- **Smart caching** with SoftReferences (prevents memory leaks)
-- **Thread-safe** concurrent data structures
-- **Non-blocking** WebSocket implementation
-- **<1% overhead** on server tick time with moderate usage
-
----
-
 ## Contributing
 
 Contributions are welcome! Please feel free to:
@@ -383,29 +306,3 @@ Contributions are welcome! Please feel free to:
 - Suggest features
 - Submit pull requests
 - Improve documentation
-
----
-
-## Links
-
-<p align="center">
-  <a href="https://github.com/addavriance/mcwebapi">
-    <img src="https://img.shields.io/badge/Python_Client-mcwebapi-blue?style=for-the-badge&logo=python&logoColor=white" alt="Python Client"/>
-  </a>
-  <a href="https://pypi.org/project/mcwebapi/">
-    <img src="https://img.shields.io/badge/PyPI-mcwebapi-blue?style=for-the-badge&logo=pypi&logoColor=white" alt="PyPI"/>
-  </a>
-  <a href="https://github.com/addavriance/MinecraftWebsocketAPI/wiki">
-    <img src="https://img.shields.io/badge/Wiki-Documentation-green?style=for-the-badge&logo=github" alt="Wiki"/>
-  </a>
-</p>
-
----
-
-<div align="center">
-  
-  **Built with** [NeoForge](https://neoforged.net/) • [Jackson](https://github.com/FasterXML/jackson) • [Netty](https://netty.io/)
-  
-  <sub>Made with ❤️ by <a href="https://github.com/addavriance">addavriance</a></sub>
-  
-</div>
